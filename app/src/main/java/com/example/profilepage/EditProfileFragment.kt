@@ -1,13 +1,13 @@
 package com.example.profilepage
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.example.profilepage.databinding.FragmentEditProfileBinding
+import kotlinx.coroutines.runBlocking
 
 class EditProfileFragment : Fragment() {
 
@@ -15,6 +15,9 @@ class EditProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ProfileViewModel by activityViewModels()
+
+    private lateinit var myPref: MySharedPreferences
+    private lateinit var myDataStore: MyDataStore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,23 +30,18 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        myPref = MySharedPreferences(requireContext())
+        myDataStore = MyDataStore(requireContext())
         init()
     }
 
     private fun init() {
-        binding.nameET.setText(viewModel.name)
-        binding.updateBtn.setOnClickListener {
-            viewModel.name = binding.nameET.text.toString()
-            navigate()
+        binding.button.setOnClickListener {
+//            binding.textView.text = myPref.getData("name")
+            runBlocking {
+                binding.textView.text = myDataStore.getData("name")
+            }
         }
-
-        binding.back.setOnClickListener {
-            navigate()
-        }
-    }
-
-    private fun navigate() {
-        findNavController().navigate(R.id.action_editProfileFragment_to_profileFragment)
     }
 
     override fun onDestroy() {
